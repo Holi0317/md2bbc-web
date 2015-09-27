@@ -226,6 +226,7 @@ gulp.task('default', ['clean'], function (cb) {
     'elements',
     ['images', 'fonts', 'html'],
     'vulcanize',
+    'precache',
     cb);
     // Note: add , 'precache' , after 'vulcanize', if your are going to use Service Worker
 });
