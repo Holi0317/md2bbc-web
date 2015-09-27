@@ -9,15 +9,14 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<html lang="">
+<html lang="en">
 
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="">
+  <meta name="description" content="Convert Markdown to BBcode">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
-  <!-- Place favicon.ico in the `app/` directory -->
+  <title>MD2bbc</title>
 
   <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#303F9F">
@@ -57,7 +56,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <body unresolved class="fullbleed layout vertical">
   <span id="browser-sync-binding"></span>
-  <convert-ui></convert-ui>
+  <paper-scroll-header-panel class="flex" condenses>
+    <paper-toolbar class="tall">
+      <div class="flex"></div>
+      <div class="inline-block">
+        <a href="https://github.com/Holi0317/md2bbc-web/issues" class="inherit" target="_blank"><paper-icon-button icon="bug-report" alt="Report a bug" id="bug"></paper-icon-button></a>
+        <paper-tooltip for="bug">Report a bug</paper-tooltip>
+      </div>
+      <div class="bottom title">Markdown to BBcode</div>
+    </paper-toolbar>
+    <convert-ui></convert-ui>
+  </paper-scroll-header-panel>
 
   <!-- Uncomment next block to enable Service Worker support (1/2) -->
   <!--

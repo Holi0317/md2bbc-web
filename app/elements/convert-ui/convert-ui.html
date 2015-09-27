@@ -1,4 +1,9 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/classes/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <link rel="import" href="../../bower_components/marked-element/marked-element.html">
 
@@ -8,12 +13,42 @@
 <style>
 :host {
   display: block;
+  margin: 15px;
+}
+@media (max-width: 600px) {
+  .scaffold {
+    display: block;
+  }
+  .scaffold > * {
+    display: block;
+  }
+}
+@media (min-width: 601px) {
+  .scaffold {
+    display: flex;
+  }
+  .scaffold > * {
+    display: inline;
+    width: 49%;
+    padding: 3px;
+  }
 }
 </style>
 
 <template>
-  <paper-textarea label="Markdown" value="{{markdown}}" id="markdown"></paper-textarea>
-  <paper-textarea label="Exported bbcode" readonly value="{{bbcode}}" id="bbcode"></paper-textarea>
+  <iron-localstorage name="md2bbc-markdown" value="{{markdown}}"></iron-localstorage>
+  <div class="scaffold">
+    <div>
+      <paper-icon-button icon="clear" id="md-clear"></paper-icon-button>
+      <paper-icon-button icon="select-all" id="md-select-all"></paper-icon-button>
+      <paper-textarea label="Markdown" value="{{markdown}}" id="markdown" rows=5></paper-textarea>
+    </div>
+    <div>
+      <paper-icon-button icon="content-copy" id="bb-copy"></paper-icon-button>
+      <paper-textarea label="Exported bbcode" readonly value="{{bbcode}}" id="bbcode" rows=5></paper-textarea>
+    </div>
+  </div>
+  <paper-toast text="Press Ctrl+C to copy." id="nocopy"></paper-toast>
 </template>
 
 <script>
@@ -28,6 +63,32 @@ Polymer({
       observer: 'render'
     },
     bbcode: String
+  },
+  listeners: {
+    'md-clear.click': 'clearMd',
+    'md-select-all.click': 'selectAllMd',
+    'bb-copy.click': 'copyResultBb'
+  },
+
+  clearMd: function () {
+    this.markdown = '';
+  },
+  selectAllMd: function () {
+    var textarea = this.$.markdown.inputElement.textarea;
+    textarea.select();
+  },
+
+  copyResultBb: function () {
+    if (!this.bbcode) {
+      // Nothing in container
+      return;
+    }
+    var textarea = this.$.bbcode.inputElement.textarea;
+    textarea.select();
+    if (!document.execCommand('copy')) {
+      // Browser does not support :(
+      this.$.nocopy.show();
+    }
   },
   render: function () {
     this.set('bbcode', marked(this.markdown));
