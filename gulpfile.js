@@ -165,6 +165,12 @@ gulp.task('precache', function (callback) {
 // Clean Output Directory
 gulp.task('clean', del.bind(null, ['.tmp', 'dist']));
 
+// Deploy to github pages
+gulp.task('deploy', function () {
+  return gulp.src('./dist/**/*')
+  .pipe($.ghPages());
+});
+
 // Watch Files For Changes & Reload
 gulp.task('serve', ['styles', 'elements', 'images'], function () {
   browserSync({
