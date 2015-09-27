@@ -1,6 +1,12 @@
 {
-  "name": "polymer-starter-kit",
-  "private": true,
+  "name": "md2bbc-web",
+  "version": "1.0.0",
+  "authors": [
+    "Holi0317 <holliswuhollis@gmail.com>"
+  ],
+  "description": "Web fronend for md2bbc.js",
+  "license": "MIT",
+  "homepage": "https://holi0317.github.io/md2bbc-web",
   "dependencies": {
     "iron-elements": "PolymerElements/iron-elements#1.0.4",
     "md2bbc": "~1.0.3",
