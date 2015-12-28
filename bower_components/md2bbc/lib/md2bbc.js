@@ -1,114 +1,137 @@
 /*
 * Renderer for marked. Convert markdown to bbcode.
-* Full name is RendererBBCode.
 */
 (function () {
   'use strict';
 
-  function Renderer(options) {
-    this.options = options || {};
+  const DEFAULT_OPTIONS = {
+    paragraphTag: 'div',
+    tableAttr: '',
+    tableAlign: true
+  };
+
+  function extend(obj, src) {
+    for (var key in src) {
+      if (!obj.hasOwnProperty(key)){
+        obj[key] = src[key];
+      }
+    }
+    return obj;
   }
 
-  Renderer.prototype.code = function (code) {
-    return '[code]' +
-    code +
-    '\n[/code]';
-  };
-
-  Renderer.prototype.blockquote = function(quote) {
-    return '[quote]\n' + quote + '[/quote]\n';
-  };
-
-  Renderer.prototype.html = function(html) {
-    return html;
-  };
-
-  Renderer.prototype.heading = function(text, level) {
-    if (level >= 3) {
-      // BBCode only support heading up to level 3
-      level = 3;
+  class Renderer {
+    constructor () {
+      this._options = {};
     }
-    return '[h' +
-    level +
-    ']' +
-    text +
-    '[/h' +
-    level +
-    ']\n';
-  };
 
-  Renderer.prototype.hr = function() {
-    return '[hr]\n';
-  };
+    // Use getter and setter to hack options. Because marked directly set options
+    // instead of passing in as constructor option.
+    get options() {
+      return this._options;
+    }
 
-  Renderer.prototype.list = function(body, ordered) {
-    var type = ordered ? 'ol' : 'ul';
-    return '[' + type + ']\n' + body + '[/' + type + ']\n';
-  };
+    set options(value) {
+      this._options = extend(value, DEFAULT_OPTIONS);
+    }
 
-  Renderer.prototype.listitem = function(text) {
-    return '[li]' + text + '[/li]\n';
-  };
+    code (code) {
+      return `[code]${code}\n[/code]`;
+    }
 
-  Renderer.prototype.paragraph = function(text) {
-    return '[div]' + text + '[/div]\n';
-  };
+    blockquote (quote){
+      return `[quote]\n${quote}[/quote]\n`;
+    }
 
-  Renderer.prototype.table = function(header, body) {
-    return '[table width=98% broder=1]\n' +
-    header +
-    body +
-    '[/table]\n';
-  };
+    html (html) {
+      return html;
+    }
 
-  Renderer.prototype.tablerow = function(content) {
-    return '[tr]\n' + content + '[/tr]\n';
-  };
+    heading (text, level) {
+      if (level >= 3) {
+        // BBCode only support heading up to level 3
+        level = 3;
+      }
+      return `[h${level}]${text}[/h${level}]\n`;
+    }
 
-  Renderer.prototype.tablecell = function(content, flags) {
-    var type = flags.header ? 'th' : 'td';
-    var tag = flags.align ?
-    '[' + type + ' align=' + flags.align + ']' :
-    '[' + type + ']';
-    return tag + content + '[/' + type + ']\n';
-  };
+    hr () {
+      return '[hr]\n';
+    }
 
-  // span level renderer
-  Renderer.prototype.strong = function(text) {
-    return '[b]' + text + '[/b]';
-  };
+    list (body, ordered) {
+      let type = ordered ? 'ol' : 'ul';
+      return `[${type}]\n${body}[/${type}]\n`;
+    }
 
-  Renderer.prototype.em = function(text) {
-    return '[i]' + text + '[/i]';
-  };
+    listitem (text) {
+      return `[li]${text}[/li]\n`;
+    }
 
-  Renderer.prototype.codespan = function(text) {
-    return '[code]' + text + '[/code]';
-  };
+    paragraph (text) {
+      if (this.options.paragraphTag === '') {
+        // Empty string in options.paragraphTag. No tag is used
+        return `${text}\n`;
+      } else {
+        return `[${this.options.paragraphTag}]${text}[/${this.options.paragraphTag}]\n`;
+      }
+    }
 
-  Renderer.prototype.br = function() {
-    return '\n';
-  };
+    table (header, body) {
+      let space = (this.options.tableAttr) ? ' ' : '';
 
-  Renderer.prototype.del = function(text) {
-    return '[s]' + text + '[/s]';
-  };
+      return `[table${space}${this.options.tableAttr}]\n${header}${body}[/table]\n`
+    }
 
-  Renderer.prototype.link = function(href, title, text) {
-    return '[url=' + href + ']' + text + '[/url]';
-  };
+    tablerow (content) {
+      return `[tr]\n${content}[/tr]\n`;
+    }
 
-  Renderer.prototype.image = function(href) {
-    return '[img=' + href + ']';
-  };
+    tablecell (content, flags) {
+      let type = flags.header ? 'th' : 'td';
+      let tag = (flags.align && this.options.tableAlign) ?
+      `[${type} align=${flags.align}]`:
+      `[${type}]`;
+      return `${tag}${content}[/${type}]\n`;
+    }
 
-  Renderer.prototype.text = function(text) {
-    return text;
-  };
+    // span level renderer
+    strong (text) {
+      return `[b]${text}[/b]`;
+    }
+
+    em (text) {
+      return `[i]${text}[/i]`;
+    }
+
+    codespan (text) {
+      return `[code]${text}[/code]`;
+    }
+
+    br () {
+      return '\n';
+    }
+
+    del (text) {
+      return `[s]${text}[/s]`;
+    }
+
+    link (href, title, text) {
+      return `[url=${href}]${text}[/url]`;
+    }
+
+    image (href) {
+      return `[img=${href}]`;
+    }
+
+    text (text) {
+      return text;
+    }
+  }
 
   // Exporting
+  /* istanbul ignore else: Cannot use define and window in node.js */
   if (typeof module !== 'undefined' && typeof exports === 'object') {
-    module.exports = Renderer;
+    exports = module.exports = Renderer;
   } else if (typeof define === 'function' && define.amd) {
     define(function() { return Renderer; });
   } else {

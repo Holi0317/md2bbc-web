@@ -5,9 +5,11 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
-<link rel="import" href="../../bower_components/marked-element/marked-element.html">
+<link rel="import" href="../marked-convert/marked-convert.html">
+<link rel="import" href="../x-icons/x-icons.html">
+<link rel="import" href="../options-dialog/options-dialog.html">
 
-<script src="../../bower_components/md2bbc/lib/md2bbc.min.js" charset="utf-8"></script>
+<script src="../../bower_components/md2bbc/dist/md2bbc.min.js"></script>
 
 <dom-module id="convert-ui">
 <style>
@@ -37,48 +39,72 @@
 
 <template>
   <iron-localstorage name="md2bbc-markdown" value="{{markdown}}"></iron-localstorage>
+  <marked-convert input="{{markdown}}" output="{{bbcode}}" options="{{options}}" renderer="{{renderer}}"></marked-convert>
   <div class="scaffold">
     <div>
-      <paper-icon-button icon="clear" id="md-clear"></paper-icon-button>
-      <paper-icon-button icon="select-all" id="md-select-all"></paper-icon-button>
+      <paper-icon-button icon="icons:clear" id="md-clear"></paper-icon-button>
+      <paper-icon-button icon="icons:select-all" id="md-select-all"></paper-icon-button>
+      <paper-icon-button icon="icons:settings" id="show-options"></paper-icon-button>
       <paper-textarea label="Markdown" value="{{markdown}}" id="markdown" rows=5></paper-textarea>
     </div>
     <div>
-      <paper-icon-button icon="content-copy" id="bb-copy"></paper-icon-button>
+      <paper-icon-button icon="icons:content-copy" id="bb-copy"></paper-icon-button>
       <paper-textarea label="Exported bbcode" readonly value="{{bbcode}}" id="bbcode" rows=5></paper-textarea>
     </div>
   </div>
+
   <paper-toast text="Press Ctrl+C to copy." id="nocopy"></paper-toast>
+
+  <options-dialog id="options" options="{{options}}"></options-dialog>
+
 </template>
 
 <script>
-marked.setOptions({
-  renderer: new md2bbc()
-})
+/* global md2bbc */
+'use strict';
 Polymer({
   is: 'convert-ui',
+
   properties: {
     markdown: {
-      type: String,
-      observer: 'render'
+      type: String
     },
-    bbcode: String
-  },
-  listeners: {
-    'md-clear.click': 'clearMd',
-    'md-select-all.click': 'selectAllMd',
-    'bb-copy.click': 'copyResultBb'
+    bbcode: {
+      type: String
+    },
+    options: {
+      type: Object
+    },
+    renderer: {
+      type: Object,
+      readOnly: true,
+      value: function () {
+        return new md2bbc();
+      }
+    }
   },
 
-  clearMd: function () {
+  listeners: {
+    'show-options.click': 'showOptions',
+    'md-clear.click': 'clearMD',
+    'md-select-all.click': 'selectMD',
+    'bb-copy.click': 'copyBB'
+  },
+
+  showOptions: function () {
+    this.$.options.open();
+  },
+
+  clearMD: function () {
     this.markdown = '';
   },
-  selectAllMd: function () {
+
+  selectMD: function () {
     var textarea = this.$.markdown.inputElement.textarea;
     textarea.select();
   },
 
-  copyResultBb: function () {
+  copyBB: function () {
     if (!this.bbcode) {
       // Nothing in container
       return;
@@ -89,9 +115,6 @@ Polymer({
       // Browser does not support :(
       this.$.nocopy.show();
     }
-  },
-  render: function () {
-    this.set('bbcode', marked(this.markdown));
   }
 });
 </script>

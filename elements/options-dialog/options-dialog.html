@@ -1,0 +1,133 @@
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-down-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/slide-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-in-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/fade-out-animation.html">
+
+<link rel="import" href="../x-icons/x-icons.html">
+
+<dom-module id="options-dialog">
+<template>
+<style>
+:host {
+  display: block;
+}
+#dialog {
+  width: 70%;
+  height: 70%;
+}
+.right {
+  position: absolute;
+  right: 0;
+}
+.bottom {
+  position: absolute;
+  bottom: 0;
+}
+#close-button {
+  background: var(--paper-green-500);
+  color: white;
+}
+.toggle {
+  @apply(--layout-horizontal);
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.toggle > span, .toggle > paper-toggle-button {
+  @apply(--layout-flex);
+}
+</style>
+
+<iron-localstorage name="option-dialog" value="{{options}}" id="localstorage"></iron-localstorage>
+
+<paper-dialog id="dialog"
+              animation-config="{{_animationConfig}}"
+              with-backdrop>
+  <h2><iron-icon icon="icons:settings"></iron-icon> Options</h2>
+  <div class="scaffold">
+    <paper-input label="Paragraph tag" value="{{options.paragraphTag}}"></paper-input>
+    <paper-input label="Table attribute" value="{{options.tableAttr}}"></paper-input>
+    <div class="toggle">
+      <span>Table align</span>
+      <paper-toggle-button checked="{{options.tableAlign}}"></paper-toggle-button>
+    </div>
+    <div class="toggle">
+      <span>Enable GitHub flavored markdown</span>
+      <paper-toggle-button checked="{{options.gfm}}"></paper-toggle-button>
+    </div>
+  </div>
+  <div class="right bottom">
+    <paper-button raised id="close-button">Save</paper-button>
+  </div>
+</paper-dialog>
+</template>
+<script>
+'use strict';
+Polymer({
+
+  is: 'options-dialog',
+
+  properties: {
+    options: {
+      type: Object,
+      notify: true
+    },
+    _animationConfig: {
+      type: Object,
+      readOnly: true,
+      value: function () {
+        var node = this.$.dialog;
+        return {
+          entry: [{
+            name: 'slide-down-animation',
+            node: node
+          }, {
+            name: 'fade-in-animation',
+            node: node
+          }],
+          exit: [{
+            name: 'slide-up-animation',
+            node: node
+          }, {
+            name: 'fade-out-animation',
+            node: node
+          }]
+        }
+      }
+    }
+  },
+
+  listeners: {
+    'localstorage.iron-localstorage-load-empty': '_storageInit',
+    'close-button.click': 'close'
+  },
+
+  open: function () {
+    this.$.dialog.open();
+  },
+
+  close: function () {
+    this.$.dialog.close();
+  },
+
+  _storageInit: function () {
+    this.options = {
+      paragraphTag: 'div',
+      tableAttr: '',
+      tableAlign: true,
+      gfm: true
+    };
+  }
+
+});
+</script>
+</dom-module>

@@ -1,0 +1,61 @@
+<!--
+Convert markdown using marked.js
+-->
+
+<script src="../../bower_components/marked/marked.min.js"></script>
+
+<dom-module id="marked-convert">
+<script>
+/* global marked*/
+'use strict';
+
+function duplicate(obj) {
+  var target = {};
+  for (var i in obj) {
+    target[i] = obj[i];
+  }
+  return target;
+}
+
+Polymer({
+  is: 'marked-convert',
+
+  properties: {
+    input: {
+      type: String,
+      observer: 'changed'
+    },
+    output: {
+      type: String,
+      notify: true
+    },
+    options: {
+      type: Object,
+      observer: 'changed'
+    },
+    renderer: {
+      type: Object,
+      observer: 'changed'
+    }
+  },
+
+  observers: [
+    'changed(options.*)'
+  ],
+
+  changed: function () {
+    var render;
+    var opt = duplicate(this.options);
+    if (this.renderer && this.options) {
+      opt.renderer = this.renderer;
+    }
+    if (this.input) {
+      render = marked(this.input, opt);
+    } else {
+      render = '';
+    }
+    this.set('output', render);
+  }
+});
+</script>
+</dom-module>
