@@ -21,25 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <!-- Chrome for Android theme color -->
   <meta name="theme-color" content="#303F9F">
 
-  <!-- Web Application Manifest -->
-  <link rel="manifest" href="manifest.json">
-
   <!-- Tile color for Win8 -->
   <meta name="msapplication-TileColor" content="#3372DF">
-
-  <!-- Add to homescreen for Chrome on Android -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="PSK">
-  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
-
-  <!-- Add to homescreen for Safari on iOS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
-  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
-
-  <!-- Tile icon for Win8 (144x144) -->
-  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
   <!-- build:css styles/main.css -->
   <link rel="stylesheet" href="styles/main.css">
@@ -61,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <paper-toolbar class="tall">
       <div class="flex"></div>
       <div class="inline-block">
-        <a href="https://github.com/Holi0317/md2bbc-web/issues" class="inherit" target="_blank"><paper-icon-button icon="bug-report" alt="Report a bug" id="bug"></paper-icon-button></a>
+        <a href="https://github.com/Holi0317/md2bbc-web/issues" class="inherit" target="_blank"><paper-icon-button icon="icons:bug-report" alt="Report a bug" id="bug"></paper-icon-button></a>
         <paper-tooltip for="bug">Report a bug</paper-tooltip>
       </div>
       <div class="bottom title">Markdown to BBcode</div>
@@ -72,18 +55,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template is="dom-bind" id="app">
     <!-- Uncomment next block to enable Service Worker support (1/2) -->
     <paper-toast id="caching-complete"
-                 duration="6000"
-                 text="Caching complete! This app will work offline.">
-    </paper-toast>
-
-    <platinum-sw-register auto-register
-                          clients-claim
-                          skip-waiting
-                          on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="networkFirst"
-                         precache-file="precache.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
+                     duration="6000"
+                     text="Caching complete! This app will work offline.">
+        </paper-toast>
+        <platinum-sw-register auto-register
+                              clients-claim
+                              skip-waiting
+                              on-service-worker-installed="displayInstalledToast">
+          <platinum-sw-cache default-cache-strategy="fastest"
+                             cache-config-file="cache-config.json">
+          </platinum-sw-cache>
+        </platinum-sw-register>
   </template>
 
   <!-- build:js scripts/app.js -->
